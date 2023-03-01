@@ -1,13 +1,10 @@
 package cc.polyfrost.polyio.download;
 
 import cc.polyfrost.polyio.PolyIO;
-import cc.polyfrost.polyio.api.Downloader;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Path;
 
 /**
  * @author xtrm
@@ -33,9 +30,5 @@ class PolyNetwork {
             urlConnection.setRequestProperty("User-Agent", PolyIO.USER_AGENT);
         }
         return urlConnection;
-    }
-
-    public static void downloadFile(HttpURLConnection httpURLConnection, Path target, Downloader.DownloadCallback callback) {
-
     }
 }
