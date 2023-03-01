@@ -72,14 +72,6 @@ public interface Downloader {
     }
 
     interface HashProvider {
-        @Nullable String getHash();
-
-        @Nullable Supplier<@NotNull MessageDigest> getHashingFunction();
-
-        default boolean isHashPresent() {
-            return getHash() == null || getHash().isEmpty();
-        }
-
         static HashProvider of(String hash, String hashingFunction) {
             return new HashProvider() {
                 private MessageDigest messageDigest;
@@ -103,6 +95,14 @@ public interface Downloader {
                     };
                 }
             };
+        }
+
+        @Nullable String getHash();
+
+        @Nullable Supplier<@NotNull MessageDigest> getHashingFunction();
+
+        default boolean isHashPresent() {
+            return getHash() == null || getHash().isEmpty();
         }
     }
 

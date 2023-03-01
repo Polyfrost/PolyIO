@@ -13,6 +13,10 @@ public interface Store {
 
     Path getObject(String name);
 
+    Store getSubStore(String name);
+
+    Store getSubStore(String name, ObjectSchema objectSchema);
+
     /**
      * @author xtrm
      */

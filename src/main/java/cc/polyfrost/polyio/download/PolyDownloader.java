@@ -2,6 +2,7 @@ package cc.polyfrost.polyio.download;
 
 import cc.polyfrost.polyio.api.Downloader;
 import cc.polyfrost.polyio.api.Store;
+import cc.polyfrost.polyio.store.PolyStore;
 import cc.polyfrost.polyio.util.PolyHashing;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +26,11 @@ import java.util.function.Supplier;
 @Log4j2
 @RequiredArgsConstructor
 public class PolyDownloader implements Downloader {
+    public static final Store GLOBAL_DOWNLOAD_STORE =
+            PolyStore.GLOBAL_STORE.getSubStore("download-cache");
+    public static final Downloader GLOBAL_DOWNLOADER =
+            new PolyDownloader(GLOBAL_DOWNLOAD_STORE);
+
     private final Store downloadStore;
 
     @Override
@@ -139,8 +145,7 @@ public class PolyDownloader implements Downloader {
         log.trace("Downloading {} to {}", url, storeObject);
         try (InputStream inputStream = httpURLConnection.getInputStream();
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-             FileOutputStream fileOutputStream = new FileOutputStream(storeObject.toFile()))
-        {
+             FileOutputStream fileOutputStream = new FileOutputStream(storeObject.toFile())) {
             byte[] buffer = new byte[1024];
             int read;
             long totalRead = 0;

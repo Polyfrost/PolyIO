@@ -23,6 +23,7 @@ public class PolyIO {
     public static final String USER_AGENT =
             String.format("%s/%s", IMPLEMENTATION_NAME, IMPLEMENTATION_VERSION);
 
+    public static final String GLOBAL_STORE_NAME = "Polyfrost";
     private static Path localStorage = null;
 
     private PolyIO() {
@@ -70,6 +71,8 @@ public class PolyIO {
                         storePath = Paths.get(
                                 System.getProperty("user.home"),
                                 "AppData",
+                                // use Roaming since %appdata% redirects to it,
+                                // although Local would've been more fit
                                 "Roaming"
                         );
                     }

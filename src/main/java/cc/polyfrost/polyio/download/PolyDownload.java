@@ -11,7 +11,9 @@ import java.util.concurrent.Future;
 /**
  * @author xtrm
  */
-@Data class PolyDownload implements Downloader.Download<URL> {
+@Data
+class PolyDownload implements Downloader.Download<URL> {
     private final URL source;
-    @Delegate private final Future<Path> future;
+    @Delegate
+    private final Future<Path> future;
 }

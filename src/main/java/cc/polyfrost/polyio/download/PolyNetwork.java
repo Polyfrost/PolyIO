@@ -11,6 +11,7 @@ import java.net.URLConnection;
  */
 class PolyNetwork {
     private static final int NETWORK_TIMEOUT = 15_000;
+
     private PolyNetwork() {
     }
 
