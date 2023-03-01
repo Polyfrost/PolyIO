@@ -31,6 +31,9 @@ public @Data class PolyStore implements Store {
         this.storeRoot = parent.resolve(storeDirName);
         this.objectSchema = schema;
         Files.createDirectories(this.storeRoot);
+        if (storeDirName.startsWith(".")) {
+            Files.setAttribute(this.storeRoot, "dos:hidden", true);
+        }
     }
 
     @SneakyThrows
