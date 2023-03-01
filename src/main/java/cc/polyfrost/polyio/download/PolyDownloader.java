@@ -128,6 +128,9 @@ public class PolyDownloader implements Downloader {
         log.trace("Creating download store object");
         try {
             Files.createDirectories(storeObject.getParent());
+            if (Files.exists(storeObject)) {
+                Files.delete(storeObject);
+            }
             Files.createFile(storeObject);
         } catch (IOException e) {
             throw new RuntimeException(

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "cc.polyfrost"
-version = "0.0.3"
+version = "0.0.4"
 description = "A library for file and download handling."
 val gitHost = "github.com"
 val repoId = "polyfrost/PolyIO"
