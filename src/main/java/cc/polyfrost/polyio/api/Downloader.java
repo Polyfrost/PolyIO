@@ -21,43 +21,61 @@ public interface Downloader {
      * <p>Will try to rely on a cache mechanism if the file already exists and
      * {@code hashProvider} is provided.</p>
      *
-     * @param url the {@link URL} to download from
-     * @param target the target file {@link Path}
+     * @param url          the {@link URL} to download from
+     * @param target       the target file {@link Path}
      * @param hashProvider a {@link HashProvider}, nullable
-     * @param callback a {@link DownloadCallback} to be called on any change in
-     * @return a {@link Future} of the {@link Path} to the downloaded file
+     * @param callback     a {@link DownloadCallback} to be called on any change in
+     * @return a {@link Download} of the {@link Path} to the downloaded file
      */
-    Future<Path> download(@NotNull URL url, @NotNull Path target, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback);
+    Download<URL> download(@NotNull URL url, @Nullable Path target, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback);
 
-    default Future<Path> download(URL url, Path target, @Nullable HashProvider hashProvider) {
+    default Download<URL> download(URL url, Path target, @Nullable HashProvider hashProvider) {
         return download(url, target, hashProvider, DownloadCallback.NOOP);
     }
 
-    default Future<Path> download(URL url, Path target, DownloadCallback callback) {
+    default Download<URL> download(URL url, Path target, DownloadCallback callback) {
         return download(url, target, null, callback);
     }
 
-    default Future<Path> download(URL url, Path target) {
+    default Download<URL> download(URL url, Path target) {
         return download(url, target, null, DownloadCallback.NOOP);
     }
 
-    Future<Path> download(@NotNull URL url, @NotNull Store store, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback);
+    Download<URL> download(@NotNull URL url, @NotNull Store store, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback);
 
-    default Future<Path> download(URL url, Store store, @Nullable HashProvider hashProvider) {
+    default Download<URL> download(URL url, Store store, @Nullable HashProvider hashProvider) {
         return download(url, store, hashProvider, DownloadCallback.NOOP);
     }
 
-    default Future<Path> download(URL url, Store store, DownloadCallback callback) {
+    default Download<URL> download(URL url, Store store, DownloadCallback callback) {
         return download(url, store, null, callback);
     }
 
-    default Future<Path> download(URL url, Store store) {
+    default Download<URL> download(URL url, Store store) {
         return download(url, store, null, DownloadCallback.NOOP);
+    }
+
+    default Download<URL> download(URL url, HashProvider hashProvider, DownloadCallback callback) {
+        return download(url, (Path) null, hashProvider, callback);
+    }
+
+    default Download<URL> download(URL url, DownloadCallback callback) {
+        return download(url, (Path) null, null, callback);
+    }
+
+    default Download<URL> download(URL url) {
+        return download(url, (Path) null, null, DownloadCallback.NOOP);
+    }
+
+    interface Download<S> extends Future<Path> {
+        @NotNull S getSource();
     }
 
     interface HashProvider {
         @Nullable String getHash();
+
         @Nullable Supplier<@NotNull MessageDigest> getHashingFunction();
+
         default boolean isHashPresent() {
             return getHash() == null || getHash().isEmpty();
         }

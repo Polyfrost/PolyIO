@@ -1,6 +1,7 @@
 package cc.polyfrost.polyio.util;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,14 +10,17 @@ import java.security.MessageDigest;
 /**
  * @author xtrm
  */
-public class PolyHasher {
+public class PolyHashing {
     public static final MessageDigest SHA512 = findDigest("SHA-512");
     public static final MessageDigest SHA256 = findDigest("SHA-256");
     public static final MessageDigest SHA1 = findDigest("SHA-1");
     public static final MessageDigest MD5 = findDigest("MD5");
 
     public static String hash(String string, MessageDigest digest) {
-        return new String(hash(string.getBytes(), digest), StandardCharsets.UTF_8);
+        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
+        byte[] hashedBytes = hash(bytes, digest);
+        BigInteger bigInt = new BigInteger(1, hashedBytes);
+        return bigInt.toString(16);
     }
 
     public static byte[] hash(byte[] bytes, MessageDigest digest) {

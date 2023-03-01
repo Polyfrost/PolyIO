@@ -1,5 +1,6 @@
 package cc.polyfrost.polyio.tests;
 
+import cc.polyfrost.polyio.api.Store;
 import cc.polyfrost.polyio.store.PolyStore;
 import lombok.SneakyThrows;
 
@@ -18,6 +19,11 @@ class Helper {
 
     @SneakyThrows
     public static PolyStore provideStore(String name) {
-        return new PolyStore(Helper.globalRoot, name);
+        return provideStore(name, Store.ObjectSchema.DIRECT);
+    }
+
+    @SneakyThrows
+    public static PolyStore provideStore(String name, Store.ObjectSchema schema) {
+        return new PolyStore(Helper.globalRoot, name, schema);
     }
 }

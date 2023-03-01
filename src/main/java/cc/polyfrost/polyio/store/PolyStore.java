@@ -2,6 +2,7 @@ package cc.polyfrost.polyio.store;
 
 import cc.polyfrost.polyio.api.Store;
 import lombok.Data;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public @Data class PolyStore implements Store  {
         Files.createDirectories(this.storeRoot);
     }
 
+    @SneakyThrows
     @Override
     public Path getObject(String name) {
         return this.objectSchema.getObjectPath(this.storeRoot, name);

@@ -16,6 +16,13 @@ import java.util.stream.Stream;
  * @author xtrm
  */
 public class PolyIO {
+    public static final String IMPLEMENTATION_NAME =
+            PolyIO.class.getPackage().getImplementationTitle();
+    public static final String IMPLEMENTATION_VERSION =
+            PolyIO.class.getPackage().getImplementationVersion();
+    public static final String USER_AGENT =
+            String.format("%s/%s", IMPLEMENTATION_NAME, IMPLEMENTATION_VERSION);
+
     private static Path localStorage = null;
 
     private PolyIO() {
@@ -34,12 +41,18 @@ public class PolyIO {
         Platform platform = Platform.getCurrentPlatform();
         EnumOperatingSystem os = platform.getOperatingSystem();
         if (os == EnumOperatingSystem.MACOS) {
-            storePath = Paths.get(System.getProperty("user.home"), "Library", "Application Support");
+            storePath = Paths.get(
+                    System.getProperty("user.home"),
+                    "Library",
+                    "Application Support"
+            );
         } else {
             EnumFamily family = Arrays.stream(EnumFamily.values())
                     .filter(it -> it.contains(os))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Unsupported platform: " + platform));
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Unsupported platform: " + platform
+                    ));
             switch (family) {
                 case BSD:
                 case UNIX:
@@ -54,7 +67,11 @@ public class PolyIO {
                 case WINDOWS:
                     storePath = Paths.get(System.getenv("APPDATA"));
                     if (!Files.exists(storePath)) {
-                        storePath = Paths.get(System.getProperty("user.home"), "AppData", "Roaming");
+                        storePath = Paths.get(
+                                System.getProperty("user.home"),
+                                "AppData",
+                                "Roaming"
+                        );
                     }
                     break;
             }
@@ -74,7 +91,9 @@ public class PolyIO {
             );
         }
         if (!Files.exists(storePath)) {
-            throw new RuntimeException("Could not find platform target local store: " + storePath);
+            throw new IllegalStateException(
+                    "Could not find platform target local store: " + storePath
+            );
         }
 
         return storePath;
