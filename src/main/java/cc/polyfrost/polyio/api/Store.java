@@ -1,5 +1,7 @@
 package cc.polyfrost.polyio.api;
 
+import cc.polyfrost.polyio.store.PolyStore;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -16,6 +18,18 @@ public interface Store {
     Store getSubStore(String name);
 
     Store getSubStore(String name, ObjectSchema objectSchema);
+
+    static Store getGlobalStore() {
+        return PolyStore.GLOBAL_STORE;
+    }
+
+    static Store of(String name) {
+        return new PolyStore(getGlobalStore().getStoreRoot(), name);
+    }
+
+    static Store of(String name, ObjectSchema objectSchema) {
+        return new PolyStore(getGlobalStore().getStoreRoot(), name, objectSchema);
+    }
 
     /**
      * @author xtrm

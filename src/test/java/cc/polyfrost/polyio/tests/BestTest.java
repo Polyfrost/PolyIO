@@ -34,4 +34,9 @@ public class BestTest {
         Path path = dl.get();
         System.out.println("Downloaded at " + path);
     }
+
+    @SneakyThrows
+    @Test
+    public void test2() {
+    }
 }

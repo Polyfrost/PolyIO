@@ -1,6 +1,7 @@
 package cc.polyfrost.polyio.download;
 
 import cc.polyfrost.polyio.api.Downloader;
+import cc.polyfrost.polyio.api.Rewriter;
 import cc.polyfrost.polyio.api.Store;
 import cc.polyfrost.polyio.util.PolyHashing;
 import lombok.RequiredArgsConstructor;
@@ -48,57 +49,7 @@ public class PolyDownloader implements Downloader {
                 return downloadStoreObject;
             }
 
-            log.trace("Creating parent directories for {}", target);
-            try {
-                Files.createDirectories(target.getParent());
-            } catch (IOException e) {
-                log.error("Couldn't create parent directories for {}", target, e);
-            }
-
-            log.trace("Creating link from {} to {}", target, downloadStoreObject);
-
-            try {
-                log.trace("Trying to create symbolic link");
-                Files.createSymbolicLink(target, downloadStoreObject);
-                log.trace("Created symbolic link");
-                return target;
-            } catch (UnsupportedOperationException uoe) {
-                log.warn("Symbolic links are not supported on this platform, " +
-                        "falling back to hard links.");
-            } catch (IOException e) {
-                log.error("Couldn't create symbolic link, falling " +
-                        "back to hard link.", e);
-            }
-
-            try {
-                log.trace("Trying to create hard link");
-                Files.createLink(target, downloadStoreObject);
-                log.trace("Created hard link");
-                return target;
-            } catch (UnsupportedOperationException uoe) {
-                log.warn("Hard links are not supported on this platform, " +
-                        "falling back to copying.");
-            } catch (IOException e) {
-                log.error("Couldn't create hard link, falling back " +
-                        "to copying.", e);
-            }
-
-            try {
-                log.trace("Trying to copy file");
-                Files.copy(downloadStoreObject, target);
-                log.trace("Copied file");
-            } catch (IOException e) {
-                throw new RuntimeException(
-                        String.format(
-                                "Couldn't copy target file %s to %s",
-                                downloadStoreObject,
-                                target
-                        ),
-                        e
-                );
-            }
-
-            return target;
+            return Rewriter.DEFAULT.rewrite(downloadStoreObject, target);
         }));
     }
 
