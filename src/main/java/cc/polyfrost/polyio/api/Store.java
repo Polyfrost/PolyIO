@@ -1,11 +1,14 @@
 package cc.polyfrost.polyio.api;
 
+import cc.polyfrost.polyio.store.FastHashSchema;
 import cc.polyfrost.polyio.store.PolyStore;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 
 /**
  * @author xtrm
@@ -19,7 +22,7 @@ public interface Store {
 
     Store getSubStore(String name, ObjectSchema objectSchema);
 
-    static Store getGlobalStore() {
+    static @Nullable Store getGlobalStore() {
         return PolyStore.GLOBAL_STORE;
     }
 
@@ -62,6 +65,10 @@ public interface Store {
                     .resolve(version)
                     .resolve(fileName);
         };
+
+        static ObjectSchema fastHash(MessageDigest digest) {
+            return new FastHashSchema(digest);
+        }
 
         Path getObjectPath(Path storeRoot, String name) throws IOException;
     }

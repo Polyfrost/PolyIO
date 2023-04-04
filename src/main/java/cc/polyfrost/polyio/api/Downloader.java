@@ -1,5 +1,6 @@
 package cc.polyfrost.polyio.api;
 
+import cc.polyfrost.polyio.download.PolyDownloader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,23 +18,32 @@ import java.util.function.Supplier;
  */
 public interface Downloader {
     /**
-     * <p>Downloads a file from the given URL to the given target path.</p>
-     * <p>Will try to rely on a cache mechanism if the file already exists and
-     * {@code hashProvider} is provided.</p>
+     * <p>
+     * Downloads a file from the given URL to the given target path.
+     * </p>
+     * <p>
+     * Will try to rely on a cache mechanism if the file already exists and
+     * {@code hashProvider} is provided.
+     * </p>
      *
      * @param url          the {@link URL} to download from
      * @param target       the target file {@link Path}
      * @param hashProvider a {@link HashProvider}, nullable
-     * @param callback     a {@link DownloadCallback} to be called on any change in
+     * @param callback     a {@link DownloadCallback} to be called on any change
+     *                     in
      * @return a {@link Download} of the {@link Path} to the downloaded file
      */
-    Download<URL> download(@NotNull URL url, @Nullable Path target, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback);
+    Download<URL> download(@NotNull URL url, @Nullable Path target,
+            @Nullable HashProvider hashProvider,
+            @Nullable DownloadCallback callback);
 
-    default Download<URL> download(URL url, Path target, @Nullable HashProvider hashProvider) {
+    default Download<URL> download(URL url, Path target,
+            @Nullable HashProvider hashProvider) {
         return download(url, target, hashProvider, DownloadCallback.NOOP);
     }
 
-    default Download<URL> download(URL url, Path target, DownloadCallback callback) {
+    default Download<URL> download(URL url, Path target,
+            DownloadCallback callback) {
         return download(url, target, null, callback);
     }
 
@@ -41,13 +51,17 @@ public interface Downloader {
         return download(url, target, null, DownloadCallback.NOOP);
     }
 
-    Download<URL> download(@NotNull URL url, @NotNull Store store, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback);
+    Download<URL> download(@NotNull URL url, @NotNull Store store,
+            @Nullable HashProvider hashProvider,
+            @Nullable DownloadCallback callback);
 
-    default Download<URL> download(URL url, Store store, @Nullable HashProvider hashProvider) {
+    default Download<URL> download(URL url, Store store,
+            @Nullable HashProvider hashProvider) {
         return download(url, store, hashProvider, DownloadCallback.NOOP);
     }
 
-    default Download<URL> download(URL url, Store store, DownloadCallback callback) {
+    default Download<URL> download(URL url, Store store,
+            DownloadCallback callback) {
         return download(url, store, null, callback);
     }
 
@@ -55,7 +69,8 @@ public interface Downloader {
         return download(url, store, null, DownloadCallback.NOOP);
     }
 
-    default Download<URL> download(URL url, HashProvider hashProvider, DownloadCallback callback) {
+    default Download<URL> download(URL url, HashProvider hashProvider,
+            DownloadCallback callback) {
         return download(url, (Path) null, hashProvider, callback);
     }
 
@@ -68,7 +83,12 @@ public interface Downloader {
     }
 
     interface Download<S> extends Future<Path> {
-        @NotNull S getSource();
+        @NotNull
+        S getSource();
+    }
+
+    static Downloader create(Store store) {
+        return new PolyDownloader(store);
     }
 
     interface HashProvider {
@@ -97,9 +117,11 @@ public interface Downloader {
             };
         }
 
-        @Nullable String getHash();
+        @Nullable
+        String getHash();
 
-        @Nullable Supplier<@NotNull MessageDigest> getHashingFunction();
+        @Nullable
+        Supplier<@NotNull MessageDigest> getHashingFunction();
 
         default boolean isHashPresent() {
             return getHash() == null || getHash().isEmpty();
@@ -112,11 +134,15 @@ public interface Downloader {
         };
 
         /**
-         * <p>Callback function to be called on any change in the download
-         * process.</p>
+         * <p>
+         * Callback function to be called on any change in the download
+         * process.
+         * </p>
          *
-         * <p><b>Implementation Notice</b>: Please not that this function, in
-         * event of a cached file, might not be called.</p>
+         * <p>
+         * <b>Implementation Notice</b>: Please not that this function, in
+         * event of a cached file, might not be called.
+         * </p>
          *
          * @param downloaded the amount of bytes downloaded
          * @param total      the total amount of bytes to download

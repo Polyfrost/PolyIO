@@ -29,6 +29,7 @@ public class BestTest {
         Downloader.Download<URL> dl = downloader.download(new URL("https://wallpaperaccess.com//full/621802.jpg"), (p, tp) -> {
             System.out.println("DL Progress: " + p + "/" + tp + " (" + ((float) p / (float) tp) * 100 + "%)");
         });
+        //noinspection StatementWithEmptyBody
         while (!dl.isDone()) {
         }
         Path path = dl.get();

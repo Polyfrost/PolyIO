@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "cc.polyfrost"
-version = "0.0.8"
+version = "0.0.9"
 description = "A library for file and download handling."
 val gitHost = "github.com"
 val repoId = "polyfrost/PolyIO"
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("fr.stardustenterprises:plat4k:1.6.3")
+//    implementation("fr.stardustenterprises:plat4k:1.6.3")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("org.apache.logging.log4j:log4j-api:2.0-beta9")
 	runtimeOnly("org.apache.logging.log4j:log4j-core:2.0-beta9")

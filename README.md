@@ -8,6 +8,6 @@ repositories {
 }
 
 dependencies {
-    implementation("cc.polyfrost:polyio:0.0.8")
+    implementation("cc.polyfrost:polyio:0.0.9")
 }
 ```

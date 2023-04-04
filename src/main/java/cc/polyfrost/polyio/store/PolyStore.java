@@ -13,7 +13,7 @@ import java.nio.file.Path;
  * @author xtrm
  */
 public @Data class PolyStore implements Store {
-    public static final Store GLOBAL_STORE = new PolyStore(
+    public static final @NotNull Store GLOBAL_STORE = new PolyStore(
             PolyIO.getLocalStorage(),
             PolyIO.GLOBAL_STORE_NAME,
             Store.ObjectSchema.DIRECT
