@@ -9,7 +9,9 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -26,6 +28,8 @@ import java.util.function.Supplier;
 @Log4j2
 @RequiredArgsConstructor
 public class PolyDownloader implements Downloader {
+    private static final boolean TRACE_BYTES =
+            Boolean.getBoolean("polyio.debug.traceDownloadedBytes");
     private final Store downloadStore;
 
     @Override
@@ -55,7 +59,6 @@ public class PolyDownloader implements Downloader {
 
     @Override
     public Download<URL> download(@NotNull URL url, @NotNull Store store, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback) {
-        // target = storeRoot/hash(url)
         String targetName = PolyHashing.hash(url.toString(), PolyHashing.SHA256);
         Path target = store.getStoreRoot().resolve(targetName);
         return download(url, target, hashProvider, callback);
@@ -80,6 +83,7 @@ public class PolyDownloader implements Downloader {
         try {
             Files.createDirectories(storeObject.getParent());
             if (Files.exists(storeObject)) {
+                log.trace("Download store object already exists, deleting...");
                 Files.delete(storeObject);
             }
             Files.createFile(storeObject);
@@ -91,14 +95,21 @@ public class PolyDownloader implements Downloader {
         }
 
         log.trace("Downloading {} to {}", url, storeObject);
-        try (InputStream inputStream = httpURLConnection.getInputStream();
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-             FileOutputStream fileOutputStream = new FileOutputStream(storeObject.toFile())) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (InputStream inputStream = httpURLConnection.getInputStream()) {
             byte[] buffer = new byte[1024];
             int read;
             long totalRead = 0;
-            while ((read = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, read);
+            while ((read = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                if (TRACE_BYTES) {
+                    log.trace("Read {}/{} total bytes", read, totalRead);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 0; i < read; i++) {
+                        stringBuilder.append(String.format("%02X", buffer[i]));
+                    }
+                    log.trace("buffer={}", stringBuilder.toString());
+                }
+                byteArrayOutputStream.write(buffer, 0, read);
                 totalRead += read;
                 callback.updateProgress(totalRead, total);
             }
@@ -109,6 +120,24 @@ public class PolyDownloader implements Downloader {
             );
         } finally {
             httpURLConnection.disconnect();
+        }
+
+        try {
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            if (TRACE_BYTES) {
+                log.trace("Writing {} bytes to {}", bytes.length, storeObject);
+                StringBuilder stringBuilder = new StringBuilder();
+                for (byte b : bytes) {
+                    stringBuilder.append(String.format("%02X", b));
+                }
+                log.trace("buffer={}", stringBuilder.toString());
+            }
+            Files.write(storeObject, bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Error while writing to " + storeObject,
+                    e
+            );
         }
 
         return true;

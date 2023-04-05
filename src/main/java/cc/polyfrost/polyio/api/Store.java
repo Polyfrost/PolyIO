@@ -2,7 +2,7 @@ package cc.polyfrost.polyio.api;
 
 import cc.polyfrost.polyio.store.FastHashSchema;
 import cc.polyfrost.polyio.store.PolyStore;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,23 +14,23 @@ import java.security.MessageDigest;
  * @author xtrm
  */
 public interface Store {
-    Path getStoreRoot();
+    @NotNull Path getStoreRoot();
 
-    Path getObject(String name);
+    @NotNull Path getObject(String name);
 
-    Store getSubStore(String name);
+    @NotNull Store getSubStore(String name);
 
-    Store getSubStore(String name, ObjectSchema objectSchema);
+    @NotNull Store getSubStore(String name, ObjectSchema objectSchema);
 
-    static @Nullable Store getGlobalStore() {
+    static @NotNull Store getGlobalStore() {
         return PolyStore.GLOBAL_STORE;
     }
 
-    static Store of(String name) {
+    static Store of(@NotNull String name) {
         return new PolyStore(getGlobalStore().getStoreRoot(), name);
     }
 
-    static Store of(String name, ObjectSchema objectSchema) {
+    static @NotNull Store of(@NotNull String name, @NotNull ObjectSchema objectSchema) {
         return new PolyStore(getGlobalStore().getStoreRoot(), name, objectSchema);
     }
 

@@ -38,17 +38,17 @@ public @Data class PolyStore implements Store {
 
     @SneakyThrows
     @Override
-    public Path getObject(String name) {
+    public @NotNull Path getObject(String name) {
         return this.objectSchema.getObjectPath(this.storeRoot, name);
     }
 
     @Override
-    public Store getSubStore(String name) {
+    public @NotNull Store getSubStore(String name) {
         return getSubStore(name, objectSchema);
     }
 
     @Override
-    public Store getSubStore(String name, ObjectSchema objectSchema) {
+    public @NotNull Store getSubStore(String name, ObjectSchema objectSchema) {
         return new PolyStore(storeRoot, name, objectSchema);
     }
 }
