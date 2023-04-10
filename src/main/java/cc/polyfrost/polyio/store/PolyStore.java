@@ -34,7 +34,7 @@ public @Data class PolyStore implements Store {
         if (storeDirName.startsWith(".")) {
             try {
                 Files.setAttribute(this.storeRoot, "dos:hidden", true);
-            } catch (UnsupportedOperationException ignored) {
+            } catch (Throwable ignored) {
             }
         }
     }
