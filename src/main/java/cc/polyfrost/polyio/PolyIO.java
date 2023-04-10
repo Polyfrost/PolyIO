@@ -61,7 +61,7 @@ public class PolyIO {
                 break;
         }
 
-        if (storePath == null) {
+        if (storePath == null || !Files.exists(storePath)) {
             storePath = Paths.get(System.getProperty(
                     "java.io.tmpdir", Stream.of("TEMP", "TMP", "TMPDIR")
                             .map(System::getenv)
@@ -70,6 +70,7 @@ public class PolyIO {
                             .findFirst()
                             .orElse("/tmp")));
         }
+
         if (!Files.exists(storePath)) {
             throw new IllegalStateException(
                     "Could not find platform target local store: " + storePath);
