@@ -32,7 +32,10 @@ public @Data class PolyStore implements Store {
         this.objectSchema = schema;
         Files.createDirectories(this.storeRoot);
         if (storeDirName.startsWith(".")) {
-            Files.setAttribute(this.storeRoot, "dos:hidden", true);
+            try {
+                Files.setAttribute(this.storeRoot, "dos:hidden", true);
+            } catch (UnsupportedOperationException ignored) {
+            }
         }
     }
 
