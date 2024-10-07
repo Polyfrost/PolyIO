@@ -3,7 +3,7 @@
 ## Importing
 ```kts
 repositories {
-    maven("https://maven.deftu.dev/releases")
+    maven("https://repo.polyfrost.org/releases")
 }
 
 dependencies {
