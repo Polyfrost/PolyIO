@@ -1,6 +1,6 @@
-package dev.deftu.filestream.tests;
+package org.polyfrost.polyio.tests;
 
-import dev.deftu.filestream.api.Store;
+import org.polyfrost.polyio.api.Store;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
-package dev.deftu.filestream.api;
+package org.polyfrost.polyio.api;
 
-import dev.deftu.filestream.store.FastHashSchema;
-import dev.deftu.filestream.store.FileStore;
+import org.polyfrost.polyio.store.FastHashSchema;
+import org.polyfrost.polyio.store.FileStore;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

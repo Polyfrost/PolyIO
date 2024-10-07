@@ -1,6 +1,6 @@
-package dev.deftu.filestream.download;
+package org.polyfrost.polyio.download;
 
-import dev.deftu.filestream.FileStream;
+import org.polyfrost.polyio.PolyIO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,7 +30,7 @@ class Networking {
             urlConnection.setRequestProperty("Connection", "keep-alive");
             urlConnection.setRequestProperty("Host", url.getHost());
             urlConnection.setRequestProperty("Referer", url.toString());
-            urlConnection.setRequestProperty("User-Agent", FileStream.USER_AGENT);
+            urlConnection.setRequestProperty("User-Agent", PolyIO.USER_AGENT);
         }
 
         return urlConnection;

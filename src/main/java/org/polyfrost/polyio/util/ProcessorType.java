@@ -1,4 +1,4 @@
-package dev.deftu.filestream.util;
+package org.polyfrost.polyio.util;
 
 public enum ProcessorType {
 

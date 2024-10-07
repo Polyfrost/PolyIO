@@ -1,6 +1,6 @@
-package dev.deftu.filestream.api;
+package org.polyfrost.polyio.api;
 
-import dev.deftu.filestream.download.DownloaderImpl;
+import org.polyfrost.polyio.download.DownloaderImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

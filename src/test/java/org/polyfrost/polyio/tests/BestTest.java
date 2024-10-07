@@ -1,9 +1,10 @@
-package dev.deftu.filestream.tests;
+package org.polyfrost.polyio.tests;
 
-import dev.deftu.filestream.api.Store;
-import dev.deftu.filestream.download.DownloaderImpl;
-import dev.deftu.filestream.store.FastHashSchema;
-import dev.deftu.filestream.util.HashingHelper;
+import org.polyfrost.polyio.api.Store;
+import org.polyfrost.polyio.api.Downloader;
+import org.polyfrost.polyio.download.DownloaderImpl;
+import org.polyfrost.polyio.store.FastHashSchema;
+import org.polyfrost.polyio.util.HashingHelper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,9 @@ public class BestTest {
     @Test
     public void test() {
         Store downloadStore = Helper.provideStore("download-cache", new FastHashSchema(HashingHelper.MD5));
-        dev.deftu.filestream.api.Downloader downloader = new DownloaderImpl(downloadStore);
+        Downloader downloader = new DownloaderImpl(downloadStore);
 
-        dev.deftu.filestream.api.Downloader.Download<URL> dl = downloader.download(new URL("https://wallpaperaccess.com//full/621802.jpg"), (p, tp) -> {
+        Downloader.Download<URL> dl = downloader.download(new URL("https://wallpaperaccess.com//full/621802.jpg"), (p, tp) -> {
             System.out.println("DL Progress: " + p + "/" + tp + " (" + ((float) p / (float) tp) * 100 + "%)");
         });
         //noinspection StatementWithEmptyBody

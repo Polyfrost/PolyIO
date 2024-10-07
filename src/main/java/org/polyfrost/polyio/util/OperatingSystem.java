@@ -1,4 +1,4 @@
-package dev.deftu.filestream.util;
+package org.polyfrost.polyio.util;
 
 import org.jetbrains.annotations.NotNull;
 

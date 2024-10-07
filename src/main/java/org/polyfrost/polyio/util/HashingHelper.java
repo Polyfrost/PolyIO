@@ -1,4 +1,4 @@
-package dev.deftu.filestream.util;
+package org.polyfrost.polyio.util;
 
 import java.io.IOException;
 import java.math.BigInteger;

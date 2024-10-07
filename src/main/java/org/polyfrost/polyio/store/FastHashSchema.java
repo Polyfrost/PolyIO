@@ -1,7 +1,7 @@
-package dev.deftu.filestream.store;
+package org.polyfrost.polyio.store;
 
-import dev.deftu.filestream.api.Store;
-import dev.deftu.filestream.util.HashingHelper;
+import org.polyfrost.polyio.api.Store;
+import org.polyfrost.polyio.util.HashingHelper;
 
 import java.nio.file.Path;
 import java.security.MessageDigest;

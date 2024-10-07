@@ -1,7 +1,7 @@
-package dev.deftu.filestream.tests;
+package org.polyfrost.polyio.tests;
 
-import dev.deftu.filestream.api.Store;
-import dev.deftu.filestream.store.FileStore;
+import org.polyfrost.polyio.api.Store;
+import org.polyfrost.polyio.store.FileStore;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;

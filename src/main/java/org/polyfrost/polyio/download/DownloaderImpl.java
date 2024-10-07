@@ -1,9 +1,9 @@
-package dev.deftu.filestream.download;
+package org.polyfrost.polyio.download;
 
-import dev.deftu.filestream.api.Downloader;
-import dev.deftu.filestream.api.Rewriter;
-import dev.deftu.filestream.api.Store;
-import dev.deftu.filestream.util.HashingHelper;
+import org.polyfrost.polyio.api.Downloader;
+import org.polyfrost.polyio.api.Rewriter;
+import org.polyfrost.polyio.api.Store;
+import org.polyfrost.polyio.util.HashingHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;

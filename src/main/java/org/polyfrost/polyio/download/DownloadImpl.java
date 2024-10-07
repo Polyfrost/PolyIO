@@ -1,6 +1,6 @@
-package dev.deftu.filestream.download;
+package org.polyfrost.polyio.download;
 
-import dev.deftu.filestream.api.Downloader;
+import org.polyfrost.polyio.api.Downloader;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;

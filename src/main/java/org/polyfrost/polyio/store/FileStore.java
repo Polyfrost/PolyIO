@@ -1,7 +1,7 @@
-package dev.deftu.filestream.store;
+package org.polyfrost.polyio.store;
 
-import dev.deftu.filestream.FileStream;
-import dev.deftu.filestream.api.Store;
+import org.polyfrost.polyio.PolyIO;
+import org.polyfrost.polyio.api.Store;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,8 +14,8 @@ import java.nio.file.Path;
 public class FileStore implements Store {
 
     public static final @NotNull Store GLOBAL_STORE = new FileStore(
-            FileStream.getLocalStorage(),
-            FileStream.GLOBAL_STORE_NAME,
+            PolyIO.getLocalStorage(),
+            PolyIO.GLOBAL_STORE_NAME,
             Store.ObjectSchema.DIRECT
     );
 

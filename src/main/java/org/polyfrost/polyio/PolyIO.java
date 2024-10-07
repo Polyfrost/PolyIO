@@ -1,6 +1,6 @@
-package dev.deftu.filestream;
+package org.polyfrost.polyio;
 
-import dev.deftu.filestream.util.OperatingSystem;
+import org.polyfrost.polyio.util.OperatingSystem;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 /**
  * @author xtrm
  */
-public class FileStream {
+public class PolyIO {
 
     public static final String NAME = "@PROJECT_NAME@";
     public static final String VERSION = "@PROJECT_VERSION@";
@@ -25,7 +25,7 @@ public class FileStream {
 
     private static Path localStorage = null;
 
-    private FileStream() {
+    private PolyIO() {
     }
 
     public static Path getLocalStorage() {

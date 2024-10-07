@@ -1,4 +1,4 @@
-package dev.deftu.filestream.api;
+package org.polyfrost.polyio.api;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
