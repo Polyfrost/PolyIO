@@ -1,7 +1,7 @@
-package cc.polyfrost.polyio.api;
+package dev.deftu.filestream.api;
 
-import cc.polyfrost.polyio.store.FastHashSchema;
-import cc.polyfrost.polyio.store.PolyStore;
+import dev.deftu.filestream.store.FastHashSchema;
+import dev.deftu.filestream.store.FileStore;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -14,6 +14,7 @@ import java.security.MessageDigest;
  * @author xtrm
  */
 public interface Store {
+
     @NotNull Path getStoreRoot();
 
     @NotNull Path getObject(String name);
@@ -23,15 +24,15 @@ public interface Store {
     @NotNull Store getSubStore(String name, ObjectSchema objectSchema);
 
     static @NotNull Store getGlobalStore() {
-        return PolyStore.GLOBAL_STORE;
+        return FileStore.GLOBAL_STORE;
     }
 
     static Store of(@NotNull String name) {
-        return new PolyStore(getGlobalStore().getStoreRoot(), name);
+        return new FileStore(getGlobalStore().getStoreRoot(), name);
     }
 
     static @NotNull Store of(@NotNull String name, @NotNull ObjectSchema objectSchema) {
-        return new PolyStore(getGlobalStore().getStoreRoot(), name, objectSchema);
+        return new FileStore(getGlobalStore().getStoreRoot(), name, objectSchema);
     }
 
     /**
@@ -39,6 +40,7 @@ public interface Store {
      */
     @FunctionalInterface
     interface ObjectSchema {
+
         ObjectSchema DIRECT = Path::resolve;
         ObjectSchema URL_ENCODED = (storeRoot, name) ->
                 storeRoot.resolve(URLEncoder.encode(name, "UTF-8"));
@@ -71,5 +73,7 @@ public interface Store {
         }
 
         Path getObjectPath(Path storeRoot, String name) throws IOException;
+
     }
+
 }

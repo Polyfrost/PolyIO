@@ -1,7 +1,7 @@
-package cc.polyfrost.polyio.tests;
+package dev.deftu.filestream.tests;
 
-import cc.polyfrost.polyio.api.Store;
-import cc.polyfrost.polyio.store.PolyStore;
+import dev.deftu.filestream.api.Store;
+import dev.deftu.filestream.store.FileStore;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
@@ -18,12 +18,12 @@ class Helper {
     }
 
     @SneakyThrows
-    public static PolyStore provideStore(String name) {
+    public static FileStore provideStore(String name) {
         return provideStore(name, Store.ObjectSchema.DIRECT);
     }
 
     @SneakyThrows
-    public static PolyStore provideStore(String name, Store.ObjectSchema schema) {
-        return new PolyStore(Helper.globalRoot, name, schema);
+    public static FileStore provideStore(String name, Store.ObjectSchema schema) {
+        return new FileStore(Helper.globalRoot, name, schema);
     }
 }

@@ -1,6 +1,6 @@
-package cc.polyfrost.polyio.api;
+package dev.deftu.filestream.api;
 
-import cc.polyfrost.polyio.download.PolyDownloader;
+import dev.deftu.filestream.download.DownloaderImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +17,7 @@ import java.util.function.Supplier;
  * @author xtrm
  */
 public interface Downloader {
+
     /**
      * <p>
      * Downloads a file from the given URL to the given target path.
@@ -88,10 +89,21 @@ public interface Downloader {
     }
 
     static Downloader create(Store store) {
-        return new PolyDownloader(store);
+        return new DownloaderImpl(store);
     }
 
     interface HashProvider {
+
+        @Nullable
+        String getHash();
+
+        @Nullable
+        Supplier<@NotNull MessageDigest> getHashingFunction();
+
+        default boolean isHashPresent() {
+            return getHash() == null || getHash().isEmpty();
+        }
+
         static HashProvider of(String hash, String hashingFunction) {
             return new HashProvider() {
                 private MessageDigest messageDigest;
@@ -117,19 +129,25 @@ public interface Downloader {
             };
         }
 
-        @Nullable
-        String getHash();
+        static HashProvider of(String hash, MessageDigest messageDigest) {
+            return new HashProvider() {
+                @Override
+                public String getHash() {
+                    return hash;
+                }
 
-        @Nullable
-        Supplier<@NotNull MessageDigest> getHashingFunction();
-
-        default boolean isHashPresent() {
-            return getHash() == null || getHash().isEmpty();
+                @Override
+                public Supplier<@NotNull MessageDigest> getHashingFunction() {
+                    return () -> messageDigest;
+                }
+            };
         }
+
     }
 
     @FunctionalInterface
     interface DownloadCallback {
+
         DownloadCallback NOOP = (downloaded, total) -> {
         };
 
@@ -148,5 +166,7 @@ public interface Downloader {
          * @param total      the total amount of bytes to download
          */
         void updateProgress(long downloaded, long total);
+
     }
+
 }

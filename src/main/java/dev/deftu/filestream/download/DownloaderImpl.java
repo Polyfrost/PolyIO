@@ -1,11 +1,11 @@
-package cc.polyfrost.polyio.download;
+package dev.deftu.filestream.download;
 
-import cc.polyfrost.polyio.api.Downloader;
-import cc.polyfrost.polyio.api.Rewriter;
-import cc.polyfrost.polyio.api.Store;
-import cc.polyfrost.polyio.util.PolyHashing;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import dev.deftu.filestream.api.Downloader;
+import dev.deftu.filestream.api.Rewriter;
+import dev.deftu.filestream.api.Store;
+import dev.deftu.filestream.util.HashingHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,31 +25,35 @@ import java.util.function.Supplier;
  *
  * @author xtrm
  */
-@Log4j2
-@RequiredArgsConstructor
-public class PolyDownloader implements Downloader {
-    private static final boolean TRACE_BYTES =
-            Boolean.getBoolean("polyio.debug.traceDownloadedBytes");
+public class DownloaderImpl implements Downloader {
+
+    private static final boolean TRACE_BYTES = Boolean.getBoolean("filestream.debug.traceDownloadedBytes");
+    private static final Logger logger = LogManager.getLogger();
+
     private final Store downloadStore;
+
+    public DownloaderImpl(Store downloadStore) {
+        this.downloadStore = downloadStore;
+    }
 
     @Override
     public Download<URL> download(@NotNull URL url, @Nullable Path target, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback) {
-        return new PolyDownload(url, CompletableFuture.supplyAsync(() -> {
-            log.info("Starting download of {}", url);
+        return new DownloadImpl(url, CompletableFuture.supplyAsync(() -> {
+            logger.trace("Starting download of {}", url);
 
             Path downloadStoreObject = downloadStore.getObject(url.toString());
-            log.trace("Download store object is {}", downloadStoreObject);
+            logger.trace("Download store object is {}", downloadStoreObject);
 
             boolean needsLinking = target != null;
 
             if (!isValid(downloadStoreObject, hashProvider)) {
-                log.trace("Invalid local object, downloading {} to {}", url, downloadStoreObject);
+                logger.trace("Invalid local object, downloading {} to {}", url, downloadStoreObject);
                 boolean success = downloadFile(url, downloadStoreObject, callback != null ? callback : DownloadCallback.NOOP);
-                log.trace("Finished downloading.");
+                logger.trace("Download of {} to {} was {}", url, downloadStoreObject, success ? "successful" : "unsuccessful");
             }
 
             if (!needsLinking) {
-                log.trace("No linking required, returning {}", downloadStoreObject);
+                logger.trace("No linking required, returning {}", downloadStoreObject);
                 return downloadStoreObject;
             }
 
@@ -59,16 +63,16 @@ public class PolyDownloader implements Downloader {
 
     @Override
     public Download<URL> download(@NotNull URL url, @NotNull Store store, @Nullable HashProvider hashProvider, @Nullable DownloadCallback callback) {
-        String targetName = PolyHashing.hash(url.toString(), PolyHashing.SHA256);
+        String targetName = HashingHelper.hash(url.toString(), HashingHelper.SHA256);
         Path target = store.getStoreRoot().resolve(targetName);
         return download(url, target, hashProvider, callback);
     }
 
     private boolean downloadFile(URL url, Path storeObject, @NotNull DownloadCallback callback) {
-        log.trace("Opening connection to {}", url);
+        logger.trace("Opening connection to {}", url);
         HttpURLConnection httpURLConnection;
         try {
-            httpURLConnection = (HttpURLConnection) PolyNetwork.createConnection(url);
+            httpURLConnection = (HttpURLConnection) Networking.createConnection(url);
         } catch (IOException e) {
             throw new RuntimeException(
                     "Error while opening connection to " + url,
@@ -77,13 +81,13 @@ public class PolyDownloader implements Downloader {
         }
 
         long total = httpURLConnection.getContentLengthLong();
-        log.trace("Connection opened, total size is {}", total);
+        logger.trace("Connection opened, total size is {}", total);
 
-        log.trace("Creating download store object");
+        logger.trace("Creating download store object");
         try {
             Files.createDirectories(storeObject.getParent());
             if (Files.exists(storeObject)) {
-                log.trace("Download store object already exists, deleting...");
+                logger.trace("Download store object already exists, deleting...");
                 Files.delete(storeObject);
             }
             Files.createFile(storeObject);
@@ -94,7 +98,7 @@ public class PolyDownloader implements Downloader {
             );
         }
 
-        log.trace("Downloading {} to {}", url, storeObject);
+        logger.trace("Downloading {} to {}", url, storeObject);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (InputStream inputStream = httpURLConnection.getInputStream()) {
             byte[] buffer = new byte[1024];
@@ -102,12 +106,12 @@ public class PolyDownloader implements Downloader {
             long totalRead = 0;
             while ((read = inputStream.read(buffer, 0, buffer.length)) != -1) {
                 if (TRACE_BYTES) {
-                    log.trace("Read {}/{} total bytes", read, totalRead);
+                    logger.trace("Read {}/{} total bytes", read, totalRead);
                     StringBuilder stringBuilder = new StringBuilder();
                     for (int i = 0; i < read; i++) {
                         stringBuilder.append(String.format("%02X", buffer[i]));
                     }
-                    log.trace("buffer={}", stringBuilder.toString());
+                    logger.trace("buffer={}", stringBuilder.toString());
                 }
                 byteArrayOutputStream.write(buffer, 0, read);
                 totalRead += read;
@@ -125,12 +129,13 @@ public class PolyDownloader implements Downloader {
         try {
             byte[] bytes = byteArrayOutputStream.toByteArray();
             if (TRACE_BYTES) {
-                log.trace("Writing {} bytes to {}", bytes.length, storeObject);
+                logger.trace("Writing {} bytes to {}", bytes.length, storeObject);
                 StringBuilder stringBuilder = new StringBuilder();
                 for (byte b : bytes) {
                     stringBuilder.append(String.format("%02X", b));
                 }
-                log.trace("buffer={}", stringBuilder.toString());
+
+                logger.trace("buffer={}", stringBuilder.toString());
             }
             Files.write(storeObject, bytes);
         } catch (IOException e) {
@@ -144,34 +149,41 @@ public class PolyDownloader implements Downloader {
     }
 
     private boolean isValid(@NotNull Path target, @Nullable HashProvider hashProvider) {
-        log.trace("Checking if {} is valid", target);
+        logger.trace("Checking if {} is valid", target);
         if (!Files.exists(target)) {
-            log.trace("{} does not exist, invalid", target);
+            logger.trace("{} does not exist, invalid", target);
             return false;
         }
+
         if (hashProvider == null) {
-            log.trace("No hash provider, assuming invalid");
+            logger.trace("No hash provider, assuming invalid");
             return false;
         }
+
         String hash = hashProvider.getHash();
         Supplier<MessageDigest> hashingFunction = hashProvider.getHashingFunction();
         if (hash == null || hashingFunction == null) {
-            log.trace("No hash or hashing function, assuming invalid");
+            logger.trace("No hash or hashing function, assuming invalid");
             return false;
         }
+
+        logger.trace("Hash provider for {} returned {}", target, hash);
+
         String computedHash;
         try {
-            MessageDigest messageDigest = hashProvider.getHashingFunction().get();
-            computedHash = PolyHashing.hash(target, messageDigest);
+            MessageDigest messageDigest = hashingFunction.get();
+            computedHash = HashingHelper.hash(target, messageDigest);
         } catch (IOException e) {
             throw new RuntimeException(
                     "Error while computing hash of " + target,
                     e
             );
         }
-        log.trace("Computed hash of {} is {}", target, computedHash);
+
+        logger.trace("Computed hash of {} is {}", target, computedHash);
         boolean valid = hash.equals(computedHash);
-        log.trace("Hash is {}valid", valid ? "" : "in");
+        logger.trace("Hash is {}valid", valid ? "" : "in");
         return valid;
     }
+
 }

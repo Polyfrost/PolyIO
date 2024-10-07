@@ -1,6 +1,6 @@
-package cc.polyfrost.polyio.download;
+package dev.deftu.filestream.download;
 
-import cc.polyfrost.polyio.PolyIO;
+import dev.deftu.filestream.FileStream;
 
 import java.io.IOException;
 import java.net.URL;
@@ -9,10 +9,11 @@ import java.net.URLConnection;
 /**
  * @author xtrm
  */
-class PolyNetwork {
+class Networking {
+
     private static final int NETWORK_TIMEOUT = 15_000;
 
-    private PolyNetwork() {
+    private Networking() {
     }
 
     public static URLConnection createConnection(URL url) throws IOException {
@@ -21,6 +22,7 @@ class PolyNetwork {
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(false);
         urlConnection.setReadTimeout(NETWORK_TIMEOUT);
+
         {
             urlConnection.setRequestProperty("Accept", "*/*");
             urlConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
@@ -28,8 +30,10 @@ class PolyNetwork {
             urlConnection.setRequestProperty("Connection", "keep-alive");
             urlConnection.setRequestProperty("Host", url.getHost());
             urlConnection.setRequestProperty("Referer", url.toString());
-            urlConnection.setRequestProperty("User-Agent", PolyIO.USER_AGENT);
+            urlConnection.setRequestProperty("User-Agent", FileStream.USER_AGENT);
         }
+
         return urlConnection;
     }
+
 }
