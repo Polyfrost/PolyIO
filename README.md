@@ -1,15 +1,12 @@
-# FileStream
-Files but streaming (and screaming!)
+# PolyIO
 
-I will write documentation when I can be bothered.
-
-## Import
+## Importing
 ```kts
 repositories {
     maven("https://maven.deftu.dev/releases")
 }
 
 dependencies {
-    implementation("dv.deftu:filestream:0.1.0")
+    implementation("org.polyfrost:polyio:0.1.0")
 }
 ```
