@@ -22,6 +22,31 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
+publishing {
+    repositories {
+        fun MavenArtifactRepository.setupPolyfrostRepo() {
+            credentials(PasswordCredentials::class.java)
+
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+
+        maven {
+            name = "polyfrostReleases"
+            url = uri("https://repo.polyfrost.org/releases")
+            setupPolyfrostRepo()
+
+        }
+
+        maven {
+            name = "polyfrostSnapshots"
+            url = uri("https://repo.polyfrost.org/snapshots")
+            setupPolyfrostRepo()
+        }
+    }
+}
+
 tasks {
     test {
         useJUnitPlatform()
